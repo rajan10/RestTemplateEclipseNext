@@ -4,33 +4,46 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.app.binding.Book;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-//restclient business logic is writtern under service
+//rest client business logic is writtern under service
 public class BookClient{
-	
-	private final RestTemplate restTemplate;
-	public BookClient(RestTemplateBuilder restTemplateBuilder)//RestTemplateBuilder is injected into the 'BookClient' 
+	//private means the field/attribute 'webClient' can only be access within the class scope. Private promotes encapsulation and information binding.  final => immutability  and private final  => reusability
+	private final WebClient webClient;
+	//public BookClient(WebClient.Builder webClientBuilder) is a constructor for the 'BookClient' class. It takes a parameter of type 'WebClient.Builder'
+	public BookClient(WebClient.Builder webClientBuilder)
 	{
-		this.restTemplate=restTemplateBuilder.build();//create a instance of RestTemplate and configure it using build()
+		//initializes the 'webclient' field using the 'webClientBuilder' object
+		this.webClient = webClientBuilder.baseUrl("https://fakerestapi.azurewebsites.net/api/v1/Books").build();
 	}
 	
 	public void invokeBookTicket() {
 		String apiurl="https://fakerestapi.azurewebsites.net/api/v1/Books";
 		Book book = new Book();
 		book.setId(10010);
-		book.setTitle("Rajan RestTemplateBuilder rocks");
+		book.setTitle("Rajan WebClient rocks");
 		book.setDescription("Autobiographical book");
-		book.setPageCount(1000);
-		book.setExcerpt("This is about the excerpt here of the book Rajan RestTemplateBuilder rocks");
-		book.setPublishDate("2024-01-20");
-	  
-		ResponseEntity<String> postForEntity =restTemplate.postForEntity(apiurl, book, String.class);
-		System.out.println(postForEntity.getBody());
+		book.setPageCount(999);
+		book.setExcerpt("This is about the excerpt here of the book Rajan WebClient rocks");
+		book.setPublishDate("2024-01-25");
+		
+		String response = webClient.post() //Define the HTTP method (POST)
+				.uri(apiurl) //Define the URI
+				//.contentType(MediaType.APPLICATION_JSON) //Define the content type
+				
+				// BodyInserters.fromValue() method is used to convert the book object into the request body.
+				.body(BodyInserters.fromValue(book)) //Attach the requst body to the POST request. Here book is the payload
+				.retrieve() //Get the response
+				.bodyToMono(String.class)//Convert the response to String/Mono (asynchronous result)
+				.block(); //Block the thread and wait for the result
+		System.out.println(response);
+				
 	}
 }
 			

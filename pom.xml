@@ -38,6 +38,23 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.app</groupId>
+			<artifactId>student-data-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web-reactive -->
+		 <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+   
+    </dependency>
+
+		 <dependency>
+		 	<groupId>com.reactive</groupId>
+		 	<artifactId>ReactiveProject</artifactId>
+		 	<version>0.0.1-SNAPSHOT</version>
+		 </dependency>
 	</dependencies>
 
 	<build>
